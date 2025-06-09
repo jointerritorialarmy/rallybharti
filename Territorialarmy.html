@@ -8,17 +8,32 @@
     <style>
     * { box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
       margin: 0;
-      background: #f0f4f7;
     }
+
     header {
-      background: #002147;
+      background: #144a1e;
+      color: #fff;
+      text-align: center;
+      padding: 25px 10px;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .subheading {
+      color: #000;
+      font-size: 18px;
+    }
+    
+    .nav-bar {
+      background-color: #1d2d50;
       color: white;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
     }
     header h1 {
       flex-grow: 1;
@@ -126,14 +141,18 @@
     <h1>ARMY RECRUITMENT APPLICATION</h1>
     <img src="army_logo.png" alt="Army Logo" class="logo">
   </header>
-
-  <div class="stage-bar" id="stage-bar">
+  
+  <div class="nav-bar">
+   <div class="stage-bar" id="stage-bar">
     <div class="stage active">1</div>
     <div class="stage">2</div>
     <div class="stage">3</div>
     <div class="stage">4</div>
     <div class="stage">5</div>
   </div>
+  </div>
+
+  
 
   <form id="armyForm">
     <div class="form-step active" id="step-1">
