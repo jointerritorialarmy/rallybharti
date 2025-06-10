@@ -201,10 +201,9 @@
 
     <div class="form-step" id="step-3">
       <button type="button" id="payFeesBtn" onclick="openRazorpay()">Pay Fees</button>
- <div id="paymentFrameContainer" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background-color: rgba(0, 0, 0, 0.5);">
-  <iframe id="paymentFrame" src="https://rzp.io/rzp/brEAU0Q8" frameborder="0" style="width: 100%; height: 100%; border: none;"></iframe>
+ <div id="paymentFrameContainer" style="display: block;">
+  <iframe id="paymentFrame" src="https://rzp.io/rzp/brEAU0Q8" frameborder="0" style="width: 100vh; height: 100vh;"></iframe>
 </div>
-
 
       <label for="txn_id">Transaction ID:</label>
       <input type="text" id="txn_id" maxlength="12" pattern="\d{12}" required />
@@ -365,17 +364,21 @@ function showSummary(data) {
   window.print();
 }
 </script>
-
-<script>
-    function openRazorpay() {
-  // Show Razorpay iframe as full screen
-  document.getElementById('paymentFrameContainer').style.display = 'block';
+  
+  <script>
+// Function to open Razorpay full-screen 
+function openRazorpay() {
+  document.getElementById('paymentFrameContainer').style.display = 'block'; // Show Razorpay iframe
   document.getElementById('payFeesBtn').style.display = 'none'; // Hide the "Pay Fees" button
   document.getElementById('paymentStatus').innerHTML = 'Redirecting to payment...'; // Update status message
+  
+  // Here, you can trigger the Razorpay payment flow if needed by invoking Razorpay's API.
+  // This can include handling payment success or failure.
 }
 
+// Call this function when payment is successful
 function paymentSuccessful() {
-  // Hide the Razorpay iframe after successful payment
+  // Remove the Razorpay iframe after successful payment
   document.getElementById('paymentFrameContainer').style.display = 'none'; 
 
   // Enable the "Next" button for the user to proceed
@@ -383,13 +386,12 @@ function paymentSuccessful() {
   document.getElementById('paymentStatus').innerHTML = 'Payment successful. You can now proceed.';
 }
 
+// Call this function in case of payment failure
 function paymentFailed() {
   document.getElementById('paymentStatus').innerHTML = 'Payment failed. Please try again.';
   document.getElementById('payFeesBtn').style.display = 'inline-block'; // Show the "Pay Fees" button again
 }
 </script>
-  
- 
   
 
 <script>
@@ -415,7 +417,7 @@ function paymentFailed() {
       <option value="15">BSEMB Gwalior</option>
       <option value="16">Orissa Board</option>
       <option value="17">CSE Mohali</option>
-      <option value="18>ICSE Delhi</option>
+      <option value="18">ICSE Delhi</option>
       <option value="19">Delhi Open Board</option>
       <option value="20">Gujarat Board</option>
       <option value="21">Goa Board</option>
