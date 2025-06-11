@@ -650,6 +650,13 @@ Phone Number: ${number}
         <option value="-1">Other</option>
       `;
     }
+	   // Simulate 3 seconds loading time
+  setTimeout(function() {
+    // Hide the loader and display the QR code with animation
+    document.getElementById('loader').style.display = 'none';
+    const qrSection = document.getElementById('qrSection');
+    qrSection.classList.add('show'); // This will trigger the fade-in animation for QR code
+  }, 3000); // 3 seconds delay
     
     const boardSelect = document.getElementById('board');
     boardSelect.innerHTML = `
