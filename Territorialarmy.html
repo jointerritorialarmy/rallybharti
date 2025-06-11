@@ -219,6 +219,12 @@
       <input type="date" id="dob" required />
       <label for="aadhar">Aadhar Number:</label>
       <input type="text" id="aadhar" maxlength="12" pattern="\d{12}" required />
+     <label for="email">Email:</label>
+<input type="text" id="email" name="email" required pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" placeholder="yourname@gmail.com" />
+<small>Only @gmail.com email allowed</small>
+
+      <label for="number">Phone Number:</label>
+      <input type="text" id="number" maxlength="10" pattern="\d{10}" required />
       <button type="button" onclick="nextStep(1)">Next</button>
     </div>
 
@@ -347,6 +353,8 @@
     const mother = document.getElementById("mother_name").value;
     const dob = document.getElementById("dob").value;
     const aadhar = document.getElementById("aadhar").value;
+    const email = document.getElementById("email").value;
+    const number = document.getElementById("number").value;
     const roll10 = document.getElementById("roll_10").value;
     const board = document.getElementById("board").selectedOptions[0].text;
     const percent = document.getElementById("percent").value;
@@ -365,6 +373,8 @@
 👩‍👦 Mother's Name: ${mother}
 🎂 DOB: ${dob}
 🆔 Aadhar: ${aadhar}
+email: ${email}
+Phone Number: ${number}
 📘 10th Roll No: ${roll10}
 🏫 Board: ${board}
 📊 10th Percentage: ${percent}%
@@ -403,7 +413,7 @@
       if (signSrc.startsWith("data:")) await sendPhoto(signSrc, `✍️ Signature - ${appNo}`);
 
       showSummary({
-        appNo, name, father, mother, dob, aadhar,
+        appNo, name, father, mother, dob, aadhar, email, number,
         roll10, board, percent, passDate, txnId
       });
 
@@ -435,6 +445,8 @@
           <tr><td><strong>Mother's Name</strong></td><td>${data.mother}</td></tr>
           <tr><td><strong>Date of Birth</strong></td><td>${data.dob}</td></tr>
           <tr><td><strong>Aadhar Number</strong></td><td>${data.aadhar}</td></tr>
+          <tr><td><strong>Email</strong></td><td>${data.email}</td></tr>
+          <tr><td><strong>Phone Number</strong></td><td>${data.number}</td></tr>
           <tr><td><strong>10th Roll Number</strong></td><td>${data.roll10}</td></tr>
           <tr><td><strong>Board</strong></td><td>${data.board}</td></tr>
           <tr><td><strong>10th Percentage</strong></td><td>${data.percent}%</td></tr>
