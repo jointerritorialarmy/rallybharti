@@ -558,6 +558,42 @@ Phone Number: ${number}
   
 
   window.onload = function () {
+    // Apply Zone Options
+    const applySelect = document.getElementById('apply');
+    if (applySelect) {
+      applySelect.innerHTML = `
+        <option selected="selected" value="0">-- Select --</option>
+        <option value="1">ZONE 1</option>
+        <option value="2">ZONE 4</option>
+      `;
+    }
+
+    // Gender Options
+    const genderSelect = document.getElementById('gender');
+    if (genderSelect) {
+      genderSelect.innerHTML = `
+        <option selected="selected" value="0">-- Select --</option>
+        <option value="1">Male</option>
+        <option value="2">Female</option>
+        <option value="-1">Other</option>
+      `;
+    }
+
+    // Religion Options
+    const religionSelect = document.getElementById('religion');
+    if (religionSelect) {
+      religionSelect.innerHTML = `
+        <option selected="selected" value="0">-- Select --</option>
+        <option value="1">Hindu</option>
+        <option value="2">Muslim</option>
+        <option value="3">Sikhkh</option>
+        <option value="4">Isai</option>
+        <option value="5">Baudhdh</option>
+        <option value="6">Jain</option>
+        <option value="-1">Other</option>
+      `;
+    }
+    
     const boardSelect = document.getElementById('board');
     boardSelect.innerHTML = `
       <option selected="selected" value="0">-- Select --</option>
@@ -615,43 +651,8 @@ Phone Number: ${number}
     `;
   };
 </script>
-<script>
-  window.onload = function () {
-    const genderSelect = document.getElementById('gender');
-    genderSelect.innerHTML = `
-      <option selected="selected" value="0">-- Select --</option>
-				<option value="1">Male</option>
-				<option value="2">Female</option>
-				<option value="-1">Other</option>
-    `;
-  };
-</script>
-<script>
-  window.onload = function () {
-    const religionSelect = document.getElementById('religion');
-    religionSelect.innerHTML = `
-      <option selected="selected" value="0">-- Select --</option>
-				<option value="1">Hindu</option>
-				<option value="2">Muslim</option>
-				<option value="3">Sikhkh</option>
-				<option value="4">Isai</option>
-				<option value="5">Baudhdh</option>
-				<option value="6">Jain</option>
-				<option value="-1">Other</option>
-    `;
-  };
-</script>
-<script>
-  window.onload = function () {
-    const applySelect = document.getElementById('apply');
-    applySelect.innerHTML = `
-      <option selected="selected" value="0">-- Select --</option>
-				<option value="1">ZONE 1</option>
-				<option value="2">ZONE 4</option>
-				
-    `;
-  };
-</script>
+
+
  <script>
     setTimeout(() => {
       document.getElementById("loader").style.display = "none";
