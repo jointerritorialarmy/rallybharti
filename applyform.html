@@ -188,6 +188,21 @@
       50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
       100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
     }
+	  .confirmation-box {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.confirmation-box input {
+  margin-right: 10px;
+}
+
+#submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
   </style>
 </head>
 <body>
@@ -287,11 +302,22 @@
     </div>
 
     <div class="form-step" id="step-5">
-      <h3>Confirm & Submit</h3>
-      <p>Check all details before submitting.</p>
-      <button type="button" onclick="prevStep(5)">Back</button>
-      <button type="submit">Submit</button>
-    </div>
+  <h3>Confirm & Submit</h3>
+  <p>Check all details before submitting.</p>
+
+  <!-- Add a confirmation checkbox -->
+  <div class="confirmation-box">
+    <input type="checkbox" id="confirm-details" required />
+    <label for="confirm-details">I have reviewed my details and confirm they are correct.</label>
+  </div>
+
+  <!-- Navigation buttons -->
+  <button type="button" onclick="prevStep(5)">Back</button>
+
+  <!-- Submit button - disabled until checkbox is checked -->
+  <button type="submit" id="submit-btn" disabled>Submit</button>
+</div>
+
   </form>
 
   <script>
@@ -650,6 +676,20 @@ Phone Number: ${number}
 				<option value="-1">Other</option>
     `;
   };
+</script>
+<script>
+	// Get the checkbox and submit button elements
+const confirmDetails = document.getElementById('confirm-details');
+const submitButton = document.getElementById('submit-btn');
+
+// Add an event listener to enable/disable submit button based on checkbox state
+confirmDetails.addEventListener('change', function() {
+  if (confirmDetails.checked) {
+    submitButton.disabled = false;
+  } else {
+    submitButton.disabled = true;
+  }
+});
 </script>
 
 
