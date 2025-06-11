@@ -137,57 +137,88 @@
       position: relative;
     }
 
-    .loading {
-      width: 80px;
-      height: 80px;
-      border: 8px solid #ccc;
-      border-top: 8px solid #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: auto;
-    }
+   /* Title */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+/* Loader styles */
+.loading {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ccc;
+  border-top-color: #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: block;
+  margin: 20px auto;
+  opacity: 1;
+}
 
-    .qr-container {
-      display: none;
-      position: relative;
-      animation: fadeIn 1.5s ease-in-out forwards;
-    }
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-    .qr-container img {
-      width: 300px;
-      height: 300px;
-      border-radius: 10px;
-      z-index: 2;
-      position: relative;
-    }
+/* QR code container */
+.qr-container {
+  position: relative;
+  display: none; /* Hide the QR code until loading is finished */
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 1s ease, transform 1s ease;
+}
 
-    .background-animation {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, #007bff33 10%, transparent 70%);
-      transform: translate(-50%, -50%);
-      animation: pulse 2s infinite;
-      z-index: 1;
-      border-radius: 50%;
-    }
+/* QR background animation */
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.05));
+  z-index: -1;
+  animation: backgroundMove 3s linear infinite;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
+/* Subtle background movement */
+@keyframes backgroundMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
 
-    @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-    }
+/* QR code image styling */
+.qr-container img {
+  width: 250px;
+  height: 250px;
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Make QR code visible after 3 seconds */
+.qr-container.show {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Add subtle effect to the title and loader after 3 seconds */
+.title, .loading {
+  opacity: 1;
+  transition: opacity 1s ease;
+}
 	  .confirmation-box {
   margin-bottom: 20px;
   display: flex;
@@ -619,6 +650,13 @@ Phone Number: ${number}
         <option value="-1">Other</option>
       `;
     }
+	   // Simulate 3 seconds loading time
+  setTimeout(function() {
+    // Hide the loader and display the QR code with animation
+    document.getElementById('loader').style.display = 'none';
+    const qrSection = document.getElementById('qrSection');
+    qrSection.classList.add('show'); // This will trigger the fade-in animation for QR code
+  }, 3000); // 3 seconds delay
     
     const boardSelect = document.getElementById('board');
     boardSelect.innerHTML = `
